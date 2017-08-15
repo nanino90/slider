@@ -1,18 +1,51 @@
-// A simple program that computes the square root of a number
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <stdint.h>
+#include <iostream>
+#include <string>
+#include <chrono>
+#include <thread>
+#include "context.h"
+#include "cart.h"
+
 int main (int argc, char *argv[])
 {
-  if (argc < 2)
-    {
-    fprintf(stdout,"Usage: %s number\n",argv[0]);
-    return 1;
-    }
-  double inputValue = atof(argv[1]);
-  double outputValue = sqrt(inputValue);
-  fprintf(stdout,"The square root of %g is %g\n",
-          inputValue, outputValue);
-  return 0;
+	std::cout<<"Init program"<<std::endl;  	
+
+	context* cont;
+
+	context_construct(cont);
+
+	cart car;	
+
+
+	for(;;)
+	{
+		std::cout<<"step"<<std::endl;
+
+		switch(cont->status)
+		{
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			default:
+				break;
+
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+
+
+
+
+	return 0;
 }
 
