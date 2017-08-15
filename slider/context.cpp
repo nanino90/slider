@@ -4,7 +4,6 @@ context con;
 
 void context_construct(context* p)
 {
-	p=&con;
 	p->status=STATUS_INIT;
 }
 

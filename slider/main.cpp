@@ -7,12 +7,15 @@
 #include <thread>
 #include "context.h"
 #include "cart.h"
+#include "status.h"
 
 int main (int argc, char *argv[])
 {
+
+	uint32_t time=0;
 	std::cout<<"Init program"<<std::endl;  	
 
-	context* cont;
+	context* cont = get_context();
 
 	context_construct(cont);
 
@@ -21,26 +24,54 @@ int main (int argc, char *argv[])
 
 	for(;;)
 	{
-		std::cout<<"step"<<std::endl;
 
 		switch(cont->status)
 		{
-			case 0:
+			case STATUS_INIT:
+				std::cout<<"Init"<<std::endl;
+
+				car.set_run1(10,1000,5,100);
+				car.print_config();
+
+				cont->status = STATUS_CONFIGURED;
 				break;
-			case 1:
+			case STATUS_CONFIGURED:
+//				std::cout<<"Configured"<<std::endl;
+//				car.print_status();
+
+				if( !(time%car.m_interval) )
+				{
+					cont->status = STATUS_TAKING;
+
+				}	
+				else if( !(time%car.m_velocidad) )
+				{
+					cont->status = STATUS_MOVING;
+
+				}				
+				 if(car.m_pos>=car.m_distancia)
+					cont->status = STATUS_FINISH;
 				break;
-			case 2:
+			case STATUS_MOVING:
+				std::cout<<"Moving"<<std::endl;
+				++car.m_pos;
+				cont->status = STATUS_CONFIGURED;
 				break;
-			case 3:
+			case STATUS_TAKING:
+				std::cout<<"\tTaking"<<std::endl;
+					cont->status = STATUS_CONFIGURED;
 				break;
-			case 4:
+			case STATUS_FINISH:
+				std::cout<<"Finish"<<std::endl;
 				break;
 			default:
+				std::cout<<"Default"<<std::endl;
 				break;
 
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		++time;
 	}
 
 
