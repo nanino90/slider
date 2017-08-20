@@ -9,10 +9,11 @@
 #include "cart.h"
 #include "status.h"
 
+#define DEBUG
+
 int main (int argc, char *argv[])
 {
 
-	uint32_t time=0;
 	std::cout<<"Init program"<<std::endl;  	
 
 	context* cont = get_context();
@@ -24,42 +25,47 @@ int main (int argc, char *argv[])
 
 	for(;;)
 	{
+		//Input buttons
+		if(1)				
+		{
 
+		}
+
+		//Manage display
+
+		//Execution
 		switch(cont->status)
 		{
 			case STATUS_INIT:
+#ifdef DEBUG
 				std::cout<<"Init"<<std::endl;
-
 				car.set_run1(10,1000,5,100);
 				car.print_config();
-
+				if(car.validate_config())
+				{
+					std::cout<<"Imposible parameters!"<<std::endl;
+					cont->status = STATUS_INIT;
+				}
 				cont->status = STATUS_CONFIGURED;
+#endif
 				break;
 			case STATUS_CONFIGURED:
-//				std::cout<<"Configured"<<std::endl;
-//				car.print_status();
-
-				if( !(time%car.m_interval) )
-				{
-					cont->status = STATUS_TAKING;
-
-				}	
-				else if( !(time%car.m_velocidad) )
-				{
-					cont->status = STATUS_MOVING;
-
-				}				
-				 if(car.m_pos>=car.m_distancia)
-					cont->status = STATUS_FINISH;
+				cont->status = STATUS_TAKING;
 				break;
 			case STATUS_MOVING:
 				std::cout<<"Moving"<<std::endl;
-				++car.m_pos;
-				cont->status = STATUS_CONFIGURED;
+				if( car.move() )
+					cont->status = STATUS_WAITING;
 				break;
+			case STATUS_WAITING:
+				std::cout<<"Waiting"<<std::endl;
+				if( car.wait() )
+					cont->status = STATUS_TAKING;
+			break;
 			case STATUS_TAKING:
-				std::cout<<"\tTaking"<<std::endl;
-					cont->status = STATUS_CONFIGURED;
+				std::cout<<"Taking"<<std::endl;
+				if( car.take() )
+					cont->status = STATUS_MOVING;
 				break;
 			case STATUS_FINISH:
 				std::cout<<"Finish"<<std::endl;
@@ -70,9 +76,13 @@ int main (int argc, char *argv[])
 
 		}
 
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+#ifdef DEBUG	
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		++time;
-	}
+#endif
+		car.time_step();	
+}
 
 
 

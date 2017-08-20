@@ -1,15 +1,14 @@
 #include "cart.h"
 
 cart::cart(void):
-	m_pos(0),
-	m_obt(0),	      
-	m_velocidad(0), 
-	m_duracion(0),  
-	m_fotos(0),     
-	m_distancia(0), 
-	m_max_distancia(10000),
-	m_move_time(0),
-	m_interval(0) 
+		m_total_time(0),
+		m_take_time(0),
+		m_move_time(0),
+		m_sections(0),
+		m_section_steps(0),
+		m_time(0),
+		m_pos(0),
+		m_count(0)
 {
 	std::cout<<"Cart init"<<std::endl;
 }
@@ -26,45 +25,85 @@ uint16_t cart::get_pos(void)
 
 void cart::set_run1(uint32_t obt,uint32_t duracion,uint16_t fotos, uint16_t distancia)
 {
-	uint32_t interval;
-	interval = (uint32_t)(duracion/(uint32_t)fotos); 
+	
+	m_take_time = obt;
 
-	if(interval <= obt+m_move_time)
-	{
-		std::cout<<"Valores no compatibles"<<std::endl;
-		return;	
-	}
-	if(distancia > m_pos + m_max_distancia)
-	{
-		std::cout<<"Distancia erronea"<<std::endl;
-		return;
-	}
+	m_sections = fotos-1;
 
-	m_interval	= interval;
-	m_velocidad	= duracion / distancia;
-	m_obt 		= obt;
-	m_duracion 	= duracion;
-	m_fotos		= fotos;
-	m_distancia	= distancia;
+	m_move_time = (duracion-((uint32_t)fotos*obt))/m_sections;
+
+	m_section_steps = distancia/m_sections;
 
 	return;	
 } 
 
 void cart::print_config()
 {
-	std::cout<<"Velocidad "<<m_velocidad<<std::endl;
-	std::cout<<"Obturacion "<<m_obt<<std::endl;
-	std::cout<<"Distancia "<<m_distancia<<std::endl;
-	std::cout<<"Duracion "<<m_duracion<<std::endl;
-	std::cout<<"Fotos "<<m_fotos<<std::endl;
-	std::cout<<"Interval "<<m_interval<<std::endl;
+	std::cout<<"m_take_time "	<<m_take_time<<std::endl;
+	std::cout<<"m_sections "	<<m_sections<<std::endl;
+	std::cout<<"m_move_time "	<<m_move_time<<std::endl;
+	std::cout<<"m_section_steps "	<<m_section_steps<<std::endl;
 	std::cout<<std::endl;
 }
 
 void cart::print_status()
 {
-	std::cout<<"Fotos "<<m_fotos<<std::endl;
 	
 }
 
+bool cart::validate_config()
+{
+	//Validate configuration
+	//Constrain1: moving speed
+	
+	if( (uint32_t)m_section_steps >= m_move_time )
+		return 1;
 
+	return 0;
+}
+
+bool cart::move()
+{
+	//move a step
+	++m_pos;
+
+	if( !m_count )
+		m_count = (uint32_t)m_section_steps;
+
+	--m_count;
+
+	if( !m_count )
+		return true;
+	return false;
+}
+
+bool cart::wait()
+{
+	if( !m_count )
+		m_count = m_move_time - (uint32_t)m_section_steps;
+
+	--m_count;
+
+	if( !m_count )
+		return true;
+
+	return false;
+}
+
+bool cart::take()
+{
+	if( !m_count )
+		m_count = m_take_time;
+
+	--m_count;
+
+	if( !m_count )
+		return true;
+	return false;
+
+}
+
+void cart::time_step()
+{
+	++m_time;
+}
