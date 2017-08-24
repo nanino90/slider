@@ -1,5 +1,5 @@
 #include "cart.h"
-
+#include <wiringPi.h>
 cart::cart(void):
 		m_total_time(0),
 		m_take_time(0),

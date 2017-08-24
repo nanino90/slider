@@ -9,11 +9,17 @@
 #include "cart.h"
 #include "status.h"
 
+#include <wiringPi.h>
+
 #define DEBUG
 
 int main (int argc, char *argv[])
 {
+	int value =0;
+	wiringPiSetup();
 
+	pinMode(0,1);
+	
 	std::cout<<"Init program"<<std::endl;  	
 
 	context* cont = get_context();
@@ -63,9 +69,13 @@ int main (int argc, char *argv[])
 					cont->status = STATUS_TAKING;
 			break;
 			case STATUS_TAKING:
+				digitalWrite(0,1);
 				std::cout<<"Taking"<<std::endl;
 				if( car.take() )
+				{
+					digitalWrite(0,0);
 					cont->status = STATUS_MOVING;
+				}
 				break;
 			case STATUS_FINISH:
 				std::cout<<"Finish"<<std::endl;
@@ -82,6 +92,7 @@ int main (int argc, char *argv[])
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 #endif
 		car.time_step();	
+	++value;
 }
 
 

@@ -4,5 +4,12 @@ project (slider)
 
 set (CMAKE_CXX_STANDARD 11)
 
-add_executable(slider slider/main.cpp slider/context.cpp slider/cart.cpp)
+#include_directories(~/wirinPi/wiringPi)
+
+SET(CMAKE_CXX_FLAGS -lwiringPi)
+
+#SET(CMAKE_LIBRARY_PATH ~/wirinPi/wiringPi)
+set(SOURCES slider/main.cpp slider/context.cpp slider/cart.cpp )
+
+add_executable(slider ${SOURCES})
 
