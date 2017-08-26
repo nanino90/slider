@@ -1,16 +1,24 @@
 #include "cart.h"
 #include <wiringPi.h>
+
 cart::cart(void):
-		m_total_time(0),
-		m_take_time(0),
-		m_move_time(0),
-		m_sections(0),
-		m_section_steps(0),
-		m_time(0),
-		m_pos(0),
-		m_count(0)
+	m_total_time(0),
+	m_take_time(0),
+	m_move_time(0),
+	m_sections(0),
+	m_section_steps(0),
+	m_time(0),
+	m_pos(0),
+	m_count(0),
+	m_stepper_pos(0)
 {
 	std::cout<<"Cart init"<<std::endl;
+	pinMode((int)GPIO::OBT,OUTPUT);
+	pinMode((int)GPIO::AA,OUTPUT);
+	pinMode((int)GPIO::AB,OUTPUT);
+	pinMode((int)GPIO::BA,OUTPUT);
+	pinMode((int)GPIO::BB,OUTPUT);
+
 }
 
 cart::~cart(void)
@@ -25,7 +33,8 @@ uint16_t cart::get_pos(void)
 
 void cart::set_run1(uint32_t obt,uint32_t duracion,uint16_t fotos, uint16_t distancia)
 {
-	
+	m_total_time=duracion;
+
 	m_take_time = obt;
 
 	m_sections = fotos-1;
@@ -48,14 +57,14 @@ void cart::print_config()
 
 void cart::print_status()
 {
-	
+
 }
 
 bool cart::validate_config()
 {
 	//Validate configuration
 	//Constrain1: moving speed
-	
+
 	if( (uint32_t)m_section_steps >= m_move_time )
 		return 1;
 
@@ -64,23 +73,69 @@ bool cart::validate_config()
 
 bool cart::move()
 {
+	if(m_total_time%100)
+		return false;
+
 	//move a step
+	int a;
+	int b;
+	int c;
+	int d;
+	switch(m_stepper_pos%4)
+	{
+		case 0:
+			a=1;
+			b=0;
+			c=1;
+			d=0;
+			break;
+		case 1:
+			a=1;
+			b=0;
+			c=0;
+			d=1;
+			break;
+		case 2:
+			a=0;
+			b=1;
+			c=0;
+			d=1;
+			break;
+		case 3:
+			a=0;
+			b=1;
+			c=1;
+			d=0;
+			break;
+default:
+	std::cout<<"DEFUALT"<<std::endl;
+break;
+	}
+
+	digitalWrite((int)GPIO::AA,a);
+	digitalWrite((int)GPIO::AB,b);
+	digitalWrite((int)GPIO::BA,c);
+	digitalWrite((int)GPIO::BB,d);
+	
+	++m_stepper_pos;
+
 	++m_pos;
 
 	if( !m_count )
-		m_count = (uint32_t)m_section_steps;
+		m_count = (uint32_t)m_section_steps+1;
 
 	--m_count;
 
 	if( !m_count )
 		return true;
+	
 	return false;
 }
 
 bool cart::wait()
 {
 	if( !m_count )
-		m_count = m_move_time - (uint32_t)m_section_steps;
+		m_count = m_move_time - (uint32_t)m_section_steps+1;
 
 	--m_count;
 
@@ -92,18 +147,28 @@ bool cart::wait()
 
 bool cart::take()
 {
-	if( !m_count )
-		m_count = m_take_time;
 
+	if( !m_count )
+	{
+		digitalWrite((int)GPIO::OBT,1);
+		m_count = m_take_time+1;
+	}
 	--m_count;
 
 	if( !m_count )
+	{
+		digitalWrite((int)GPIO::OBT,0);
 		return true;
+	}
 	return false;
 
 }
 
-void cart::time_step()
+bool cart::time_step()
 {
 	++m_time;
+	if(m_time>=m_total_time)
+		return true;
+	return false;
+
 }

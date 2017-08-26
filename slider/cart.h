@@ -4,6 +4,18 @@
 #include <stdint.h>
 #include <iostream>
 
+enum class GPIO:int{
+	OUT =0,
+	IN  =1,
+
+	OBT =0,
+	BA  =22,
+	BB  =23,
+	AA  =24,
+	AB  =25
+
+};
+
 class cart {
 
 	public:
@@ -21,7 +33,7 @@ class cart {
 
 		bool validate_config();
 
-		void time_step();
+		bool time_step();
 
 		bool move();
 	
@@ -45,6 +57,8 @@ class cart {
 		uint32_t m_pos;
 
 		uint32_t m_count;
+
+		uint8_t	m_stepper_pos;
 };
 
 #endif

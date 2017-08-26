@@ -8,6 +8,7 @@
 #include "context.h"
 #include "cart.h"
 #include "status.h"
+#include "manage_execution.h"
 
 #include <wiringPi.h>
 
@@ -15,19 +16,13 @@
 
 int main (int argc, char *argv[])
 {
-	int value =0;
 	wiringPiSetup();
 
-	pinMode(0,1);
-	
 	std::cout<<"Init program"<<std::endl;  	
 
 	context* cont = get_context();
 
 	context_construct(cont);
-
-	cart car;	
-
 
 	for(;;)
 	{
@@ -38,62 +33,15 @@ int main (int argc, char *argv[])
 		}
 
 		//Manage display
+		manage_execution(cont);
 
-		//Execution
-		switch(cont->status)
-		{
-			case STATUS_INIT:
-#ifdef DEBUG
-				std::cout<<"Init"<<std::endl;
-				car.set_run1(10,1000,5,100);
-				car.print_config();
-				if(car.validate_config())
-				{
-					std::cout<<"Imposible parameters!"<<std::endl;
-					cont->status = STATUS_INIT;
-				}
-				cont->status = STATUS_CONFIGURED;
-#endif
-				break;
-			case STATUS_CONFIGURED:
-				cont->status = STATUS_TAKING;
-				break;
-			case STATUS_MOVING:
-				std::cout<<"Moving"<<std::endl;
-				if( car.move() )
-					cont->status = STATUS_WAITING;
-				break;
-			case STATUS_WAITING:
-				std::cout<<"Waiting"<<std::endl;
-				if( car.wait() )
-					cont->status = STATUS_TAKING;
-			break;
-			case STATUS_TAKING:
-				digitalWrite(0,1);
-				std::cout<<"Taking"<<std::endl;
-				if( car.take() )
-				{
-					digitalWrite(0,0);
-					cont->status = STATUS_MOVING;
-				}
-				break;
-			case STATUS_FINISH:
-				std::cout<<"Finish"<<std::endl;
-				break;
-			default:
-				std::cout<<"Default"<<std::endl;
-				break;
-
-		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-#ifdef DEBUG	
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-#endif
-		car.time_step();	
-	++value;
-}
+	//	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	
+	if(cont->status == STATUS_FINISH)
+		return 0;		
+	}
 
 
 

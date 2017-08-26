@@ -5,9 +5,11 @@
 #include <stdint.h>
 #include <iostream>
 #include "status.h"
+#include "cart.h"
 
 typedef struct{
 	STATUS status;
+	cart car;
 
 } context;
 
