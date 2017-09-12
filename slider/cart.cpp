@@ -126,6 +126,13 @@ break;
 
 	--m_count;
 
+	if(!digitalRead((int)GPIO::ENDSWITCH))
+	{
+		std::cout<<"Tamper final"<<std::endl;
+		m_time = m_total_time;
+		return false;
+	}	
+
 	if( !m_count )
 		return true;
 	
@@ -166,9 +173,9 @@ bool cart::take()
 
 bool cart::time_step()
 {
-	++m_time;
 	if(m_time>=m_total_time)
 		return true;
+	++m_time;
 	return false;
 
 }
