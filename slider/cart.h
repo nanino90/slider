@@ -30,6 +30,7 @@ class cart {
 		bool validate_config();
 		bool time_step();
 		bool move();
+		bool move_to_end(int dir);
 		bool wait();
 		bool take();
 

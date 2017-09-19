@@ -23,6 +23,10 @@ cart::cart(void):
 
 cart::~cart(void)
 {
+	digitalWrite((int)GPIO::AA,0);
+	digitalWrite((int)GPIO::AB,0);
+	digitalWrite((int)GPIO::BA,0);
+	digitalWrite((int)GPIO::BB,0);
 	std::cout<<"Cart erased"<<std::endl;
 }
 
@@ -178,4 +182,74 @@ bool cart::time_step()
 	++m_time;
 	return false;
 
+}
+
+bool cart::move_to_end(int dir)
+{
+	if(!digitalRead((int)GPIO::ENDSWITCH) && dir)
+	{
+		std::cout<<"Tamper final"<<std::endl;
+		m_time = m_total_time;
+		return false;
+	}	
+	if(!digitalRead((int)GPIO::STARTSWITCH) && !dir)
+	{
+		std::cout<<"Tamper init"<<std::endl;
+		m_time = m_total_time;
+		return false;
+	}	
+	
+++m_time;
+	if(m_time%1)
+		return true;
+
+	//move a step
+	int a;
+	int b;
+	int c;
+	int d;
+	switch(m_stepper_pos%4)
+	{
+		case 0:
+			a=1;
+			b=0;
+			c=1;
+			d=0;
+			break;
+		case 1:
+			a=1;
+			b=0;
+			c=0;
+			d=1;
+			break;
+		case 2:
+			a=0;
+			b=1;
+			c=0;
+			d=1;
+			break;
+		case 3:
+			a=0;
+			b=1;
+			c=1;
+			d=0;
+			break;
+default:
+	std::cout<<"DEFUALT"<<std::endl;
+break;
+	}
+
+	digitalWrite((int)GPIO::AA,a);
+	digitalWrite((int)GPIO::AB,b);
+	digitalWrite((int)GPIO::BA,c);
+	digitalWrite((int)GPIO::BB,d);
+	
+if(dir)
+	++m_stepper_pos;
+else
+--m_stepper_pos;
+
+
+std::cout<<std::to_string(m_time)<<std::endl;
+	return true;
 }

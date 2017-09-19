@@ -26,26 +26,19 @@ int main (int argc, char *argv[])
 
 	for(;;)
 	{
-		//Input buttons
-		if(1)				
-		{
-
-		}
-
 		//Manage display
-		manage_execution(cont);
+//		manage_execution(cont);
 
+	if( cont->car.move_to_end(*argv[1]-'0')== false)
+{
+	return 0;
+}	
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	//	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	
-	if(cont->status == STATUS_FINISH)
-		return 0;		
+
+		if(cont->status == STATUS_FINISH)
+			return 0;		
 	}
-
-
-
-
 	return 0;
 }
 

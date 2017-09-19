@@ -8,7 +8,7 @@ void manage_execution(context* cont)
 		{
 			case STATUS_INIT:
 				std::cout<<"Init"<<std::endl;
-				cont->car.set_run1(10,1000,5,100);
+				cont->car.set_run1(10,10000,50,1000);
 				cont->car.print_config();
 				if(cont->car.validate_config())
 				{
