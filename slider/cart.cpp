@@ -1,4 +1,5 @@
 #include "cart.h"
+#include "status.h"
 #include <wiringPi.h>
 
 cart::cart(void):
@@ -10,7 +11,8 @@ cart::cart(void):
 	m_time(0),
 	m_pos(0),
 	m_count(0),
-	m_stepper_pos(0)
+	m_stepper_pos(0),
+	m_prog(PROG_INIT)
 {
 	std::cout<<"Cart init"<<std::endl;
 	pinMode((int)GPIO::OBT,OUTPUT);
@@ -38,22 +40,18 @@ uint16_t cart::get_pos(void)
 void cart::set_run1(uint32_t obt,uint32_t duracion,uint16_t fotos, uint16_t distancia)
 {
 	m_total_time=duracion;
-
 	m_take_time = obt;
-
 	m_sections = fotos-1;
-
 	m_move_time = (duracion-((uint32_t)fotos*obt))/m_sections;
-
 	m_section_steps = distancia/m_sections;
-
-	return;	
+return;	
 } 
 
 void cart::print_config()
 {
-	std::cout<<"m_take_time "	<<m_take_time<<std::endl;
 	std::cout<<"m_sections "	<<m_sections<<std::endl;
+	std::cout<<"m_total "		<<m_total_time<<std::endl;
+	std::cout<<"m_take_time "	<<m_take_time<<std::endl;
 	std::cout<<"m_move_time "	<<m_move_time<<std::endl;
 	std::cout<<"m_section_steps "	<<m_section_steps<<std::endl;
 	std::cout<<std::endl;
@@ -184,18 +182,18 @@ bool cart::time_step()
 
 }
 
-bool cart::move_to_end(int dir)
+bool cart::move_to_limit(DIR dir)
 {
-	if(!digitalRead((int)GPIO::ENDSWITCH) && dir)
+	if(!digitalRead((int)GPIO::ENDSWITCH) && (dir == DIR::END))
 	{
 		std::cout<<"Tamper final"<<std::endl;
-		m_time = m_total_time;
+		m_prog = PROG_FINISH;
 		return false;
 	}	
-	if(!digitalRead((int)GPIO::STARTSWITCH) && !dir)
+	if(!digitalRead((int)GPIO::STARTSWITCH) && (dir == DIR::START))
 	{
 		std::cout<<"Tamper init"<<std::endl;
-		m_time = m_total_time;
+		m_prog = PROG_FINISH;
 		return false;
 	}	
 	
@@ -204,10 +202,7 @@ bool cart::move_to_end(int dir)
 		return true;
 
 	//move a step
-	int a;
-	int b;
-	int c;
-	int d;
+	int a,b,c,d;
 	switch(m_stepper_pos%4)
 	{
 		case 0:
@@ -234,9 +229,6 @@ bool cart::move_to_end(int dir)
 			c=1;
 			d=0;
 			break;
-default:
-	std::cout<<"DEFUALT"<<std::endl;
-break;
 	}
 
 	digitalWrite((int)GPIO::AA,a);
@@ -244,12 +236,9 @@ break;
 	digitalWrite((int)GPIO::BA,c);
 	digitalWrite((int)GPIO::BB,d);
 	
-if(dir)
+if(dir == DIR::END)
 	++m_stepper_pos;
 else
 --m_stepper_pos;
-
-
-std::cout<<std::to_string(m_time)<<std::endl;
 	return true;
 }

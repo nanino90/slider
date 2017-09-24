@@ -1,6 +1,6 @@
 #include "manage_execution.h"
 #include "status.h"
-
+/*
 void manage_execution(context* cont)
 {
 
@@ -8,7 +8,7 @@ void manage_execution(context* cont)
 		{
 			case STATUS_INIT:
 				std::cout<<"Init"<<std::endl;
-				cont->car.set_run1(10,10000,50,1000);
+				cont->car.set_run1(1,1000,2,1000);
 				cont->car.print_config();
 				if(cont->car.validate_config())
 				{
@@ -45,6 +45,4 @@ void manage_execution(context* cont)
 		}
 		if(cont->car.time_step())
 			cont->status=STATUS_FINISH;	
-
-
-}
+}*/

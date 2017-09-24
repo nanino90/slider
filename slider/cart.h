@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iostream>
+#include "status.h"
 
 enum class GPIO:int{
 	OUT =0,
@@ -30,9 +31,12 @@ class cart {
 		bool validate_config();
 		bool time_step();
 		bool move();
-		bool move_to_end(int dir);
+		bool move_to_limit(DIR dir);
 		bool wait();
 		bool take();
+
+
+		PROG m_prog;
 
 	private:
 		uint32_t m_total_time;

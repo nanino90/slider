@@ -9,8 +9,7 @@
 
 typedef struct{
 	STATUS status;
-	cart car;
-
+	MODE mode;
 } context;
 
 
