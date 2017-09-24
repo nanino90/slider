@@ -9,7 +9,7 @@ set (CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS -lwiringPi)
 
 #SET(CMAKE_LIBRARY_PATH ~/wirinPi/wiringPi)
-set(SOURCES slider/main.cpp slider/context.cpp slider/cart.cpp slider/manage_execution.cpp)
+set(SOURCES slider/main.cpp slider/context.cpp slider/cart.cpp slider/parse.cpp)
 
 add_executable(slider ${SOURCES})
 

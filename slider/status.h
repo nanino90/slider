@@ -25,7 +25,7 @@ typedef enum{
 }MODE;
 
 typedef enum{
-	PROG_INIT =0x10,
+	PROG_INIT =0x30,
 	PROG_CONFIGURED  ,
 	PROG_RUNNING  ,
 	PROG_MOVE_T0_END  ,
@@ -39,4 +39,12 @@ enum class DIR{
 	START
 };
 
+typedef enum{
+	ACTION_NONE,
+	ACTION_TAKING,
+	ACTION_MOVING,
+
+	ACTION_SIZE
+
+}ACTION;
 #endif

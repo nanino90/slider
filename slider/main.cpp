@@ -8,7 +8,7 @@
 #include "context.h"
 #include "cart.h"
 #include "status.h"
-#include "manage_execution.h"
+#include "parse.h"
 
 #include <wiringPi.h>
 
@@ -26,56 +26,38 @@ int main (int argc, char *argv[])
 		{
 			//read parameters and decide mode of operation
 			case STATUS_INIT:
-				if( argc > 1)
+				parse(cont, argc, argv);
+				if(cont->mode==MODE_PROGRAM)
 				{
-					std::string command(argv[1]);	
-					if(command == "manual")
+					if( !car.set_program(
+								std::stoi(std::string(argv[2])),
+								std::stoi(std::string(argv[3])),
+								std::stoi(std::string(argv[4])),
+								std::stoi(std::string(argv[5])) ) )
 					{
-						if(argc>2)
-						{
-
-							std::string data(argv[2]);	
-							if(data== "toend")
-							{
-								cont->mode=MODE_TO_END;
-							}
-							else if(data== "tostart")
-							{
-								cont->mode=MODE_TO_START;
-							}
-							cont->status = STATUS_IDLE;
-						}
-						else
-						{
-							std::cout<<"Missing command values"<<std::endl;
-							return 1;
-						}
+						std::cout<<"Impossible values"<<std::endl;
+						cont->status = STATUS_FINISHED;
 					}
 				}
-				else
-				{
-
-				}
-
 				break;
 			case STATUS_IDLE:
 				cont->status = STATUS_RUNNING;
+				car.print_config();
 				//wait for init signal
 
 				break;
 				//running mode
 			case STATUS_RUNNING:
-std::cout<<"sdf"<<std::endl;
-
 				switch(cont->mode)
 				{
 					case MODE_PROGRAM:
+						car.program();
 						break;
 					case	MODE_TO_END:
-						car.move_to_limit(DIR::END);
+						car.move(DIR::END);
 						break;
 					case	MODE_TO_START:
-						car.move_to_limit(DIR::START);
+						car.move(DIR::START);
 						break;
 					case	MODE_MANUAL:
 						break;
@@ -86,15 +68,17 @@ std::cout<<"sdf"<<std::endl;
 				//program finished
 			case STATUS_FINISHED:
 
+				return 0;
 				break;
-		
-}
-if(car.m_prog == PROG_FINISH)
-	{
-	return 0;
-	
+
+		}
+		if(car.m_prog == PROG_FINISH)
+		{
+			return 0;
+
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		//car.print_status();
 	}
 	return 0;
 
