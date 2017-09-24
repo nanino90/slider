@@ -54,10 +54,10 @@ int main (int argc, char *argv[])
 						car.program();
 						break;
 					case	MODE_TO_END:
-						car.move(DIR::END);
+						car.move(DIR::END, cont->speed);
 						break;
 					case	MODE_TO_START:
-						car.move(DIR::START);
+						car.move(DIR::START, cont->speed);
 						break;
 					case	MODE_MANUAL:
 						break;

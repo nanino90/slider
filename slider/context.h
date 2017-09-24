@@ -10,6 +10,7 @@
 typedef struct{
 	STATUS status;
 	MODE mode;
+uint16_t speed;
 } context;
 
 

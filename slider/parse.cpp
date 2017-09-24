@@ -17,9 +17,9 @@ bool parse(context* cont, int argc, char** argv)
 		std::string command(argv[1]);	
 		if(command == "move")
 		{
-			if(argc==3)
+			if(argc==4)
 			{
-
+			cont->speed=std::stoi(argv[3]);	
 				std::string data(argv[2]);	
 				if(data== "toend")
 				{

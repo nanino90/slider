@@ -29,7 +29,7 @@ class cart {
 		void print_status();
 		bool time_step();
 		void program();
-		bool move(DIR dir);
+		bool move(DIR dir, uint16_t);
 		bool wait();
 		bool take();
 		PROG m_prog;
@@ -37,6 +37,7 @@ class cart {
 
 	private:
 		bool move();
+		void release();
 		uint32_t m_total_time;
 		uint32_t m_take_time;
 		uint32_t m_interval_time;

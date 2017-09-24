@@ -26,11 +26,16 @@ cart::cart(void):
 
 cart::~cart(void)
 {
+release();
+	std::cout<<"Cart erased"<<std::endl;
+}
+
+void cart::release()
+{
 	digitalWrite((int)GPIO::AA,0);
 	digitalWrite((int)GPIO::AB,0);
 	digitalWrite((int)GPIO::BA,0);
 	digitalWrite((int)GPIO::BB,0);
-	std::cout<<"Cart erased"<<std::endl;
 }
 
 uint16_t cart::get_pos(void)
@@ -50,18 +55,18 @@ bool cart::set_program(uint32_t obt,uint32_t duracion,uint16_t fotos, uint16_t d
 	m_section_length = distancia/m_sections;
 	m_interval_time = duracion/m_sections;
 
-//que el tiempo total de para hacer todas las fotos
+	//que el tiempo total de para hacer todas las fotos
 	if( m_total_time < (m_section_length*m_sections + fotos*m_take_time) )
 	{
 		return false;
 	}
-//que de tiempo a hacer la foto y a moverse antes de empezar la proxima
+	//que de tiempo a hacer la foto y a moverse antes de empezar la proxima
 	if( m_interval_time < (m_section_length + m_take_time) )
 	{
 		return false;
 	}
-m_time=0;
-m_count=0;
+	m_time=0;
+	m_count=0;
 	return true;	
 } 
 
@@ -85,6 +90,7 @@ void cart::program()
 {
 	if(m_time > m_total_time+m_take_time)
 	{
+		std::cout<<m_pos<<std::endl;
 		std::cout<<"Tiempo"<<std::endl;
 		m_prog=PROG_FINISH;
 		return;
@@ -104,6 +110,7 @@ void cart::program()
 			--m_count;
 			if(!m_count)
 			{
+		std::cout<<m_pos<<std::endl;
 				std::cout<<"Taken"<<std::endl;
 				m_count = m_section_length;
 				m_action = ACTION_MOVING;
@@ -111,17 +118,18 @@ void cart::program()
 			break;
 		case ACTION_MOVING:
 			--m_count;
-			move(DIR::END);
+			move(DIR::END, 1);
 			if(!m_count)
 			{
 				std::cout<<"Moved"<<std::endl;
+				release();
 				m_action = ACTION_NONE;
 			}
 			break;
 
 	}
-//std::cout<<m_time<<std::endl;
-++m_time;
+	//std::cout<<m_time<<std::endl;
+	++m_time;
 }
 
 bool cart::wait()
@@ -158,8 +166,13 @@ bool cart::time_step()
 
 }
 
-bool cart::move(DIR dir)
+bool cart::move(DIR dir, uint16_t speed)
 {
+	if(m_time%speed)
+	{
+		++m_time;
+		return true;
+	}
 	if(!digitalRead((int)GPIO::ENDSWITCH) && (dir == DIR::END))
 	{
 		std::cout<<"Tamper final"<<std::endl;
@@ -173,7 +186,7 @@ bool cart::move(DIR dir)
 		m_pos=0;
 		return false;
 	}	
-	
+
 	//move a step
 	int a,b,c,d;
 	switch(m_stepper_pos%4)
@@ -208,15 +221,15 @@ bool cart::move(DIR dir)
 	digitalWrite((int)GPIO::AB,b);
 	digitalWrite((int)GPIO::BA,c);
 	digitalWrite((int)GPIO::BB,d);
-	
-if(dir == DIR::END){
-++m_pos;
-	++m_stepper_pos;
-}
-else{
-	--m_stepper_pos;
---m_pos;
-}
 
+	if(dir == DIR::END){
+		++m_pos;
+		++m_stepper_pos;
+	}
+	else{
+		--m_stepper_pos;
+		--m_pos;
+	}
+	++m_time;
 	return true;
 }
