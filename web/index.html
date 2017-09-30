@@ -2,12 +2,26 @@
 <script src=java.js></script>
 <link rel="stylesheet" type="text/css" href="style.css" />
 <head>
-<title>Simple-Web-Server html-file</title>
+<title>SlideR</title>
 </head>
 <body>
-<p id="demo"></p>
-<input type="text" name="obturacion" id="box">
-<br>
-<button onClick="test()" class="classname">Click me</button>
+<table class="tg">
+<tr>
+<td>OBTURACION</td><td><input type="text" id="obt"></td>
+</tr>
+<tr>
+<td>DURACION</td><td><input type="text" id="dur"></td>
+</tr>
+<tr>
+<td>FOTOS</td><td><input type="text" id="fot"></td>
+</tr>
+<tr>
+<td>DISTANCIA</td><td><input type="text" id="dis"></td>
+</tr>
+<tr>
+<td></td><td><button onClick="send_data()" class="classname">Enviar</button></td>
+</tr>
+</table>
+<button onClick="start()" class="classname">Iniciar</button>
 </body>
 </html>

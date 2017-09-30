@@ -31,42 +31,20 @@ int main (int argc, char *argv[])
 {
     HttpServer server(8080, 4);
     
-    server.resource["^/string$"]["POST"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
-        stringstream ss;
-        ss << request->content.rdbuf();
-        string content=ss.str();
-        
-        response << "HTTP/1.1 200 OK\r\nContent-Length: " << content.length() << "\r\n\r\n" << content;
-    };
-    
-    server.resource["^/json$"]["POST"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
+    server.resource["^/config$"]["POST"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
         try {
             ptree pt;
             read_json(request->content, pt);
 
+cout<<"POST"<<endl;
             string name=pt.get<string>("firstName")+" "+pt.get<string>("lastName");
-string hole="hola";
-cout<<name<<endl;
-            response << "HTTP/1.1 200 OK\r\nContent-Length: " << hole.length() << "\r\n\r\n" << hole;
+
+            response << "HTTP/1.1 200 OK\r\n";
         }
         catch(exception& e) {
             response << "HTTP/1.1 400 Bad Request\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
         }
     };
-    
-    server.resource["^/info$"]["GET"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
-        stringstream content_stream;
-        content_stream << "<h1>Request from " << request->remote_endpoint_address << " (" << request->remote_endpoint_port << ")</h1>";
-        content_stream << request->method << " " << request->path << " HTTP/" << request->http_version << "<br>";
-        for(auto& header: request->header) {
-            content_stream << header.first << ": " << header.second << "<br>";
-        }
-        
-        content_stream.seekp(0, ios::end);
-        
-        response <<  "HTTP/1.1 200 OK\r\nContent-Length: " << content_stream.tellp() << "\r\n\r\n" << content_stream.rdbuf();
-    };
-    
     
     server.default_resource["GET"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
         boost::filesystem::path web_root_path("../web");
@@ -122,7 +100,6 @@ cout<<name<<endl;
         server.start();
     });
     
-    server_thread.join();
 //	wiringPiSetup();
 	std::cout<<"Init program"<<std::endl;  	
 	context* cont = get_context();
@@ -135,6 +112,7 @@ cout<<name<<endl;
 		{
 			//read parameters and decide mode of operation
 			case STATUS_INIT:
+cout<<"STATUS: INIT"<<endl;
 				parse(cont, argc, argv);
 				if(cont->mode==MODE_PROGRAM)
 				{
@@ -150,6 +128,7 @@ cout<<name<<endl;
 				}
 				break;
 			case STATUS_IDLE:
+cout<<"STATUS: IDLE"<<endl;
 				cont->status = STATUS_RUNNING;
 				car.print_config();
 				//wait for init signal
@@ -157,6 +136,7 @@ cout<<name<<endl;
 				break;
 				//running mode
 			case STATUS_RUNNING:
+cout<<"STATUS: RUNNING"<<endl;
 				switch(cont->mode)
 				{
 					case MODE_PROGRAM:
@@ -176,6 +156,7 @@ cout<<name<<endl;
 				break;
 				//program finished
 			case STATUS_FINISHED:
+cout<<"STATUS: FINISHED"<<endl;
 
 				return 0;
 				break;
@@ -186,10 +167,12 @@ cout<<name<<endl;
 			return 0;
 
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		//car.print_status();
 	}
-	return 0;
+    server_thread.join();
+
+return 0;
 
 }
 
