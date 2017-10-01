@@ -233,3 +233,4 @@ bool cart::move(DIR dir, uint16_t speed)
 	++m_time;
 	return true;
 }
+

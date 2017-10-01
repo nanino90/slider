@@ -1,27 +1,28 @@
 <html>
-<script src=java.js></script>
-<link rel="stylesheet" type="text/css" href="style.css" />
-<head>
-<title>SlideR</title>
-</head>
-<body>
-<table class="tg">
-<tr>
-<td>OBTURACION</td><td><input type="text" id="obt"></td>
-</tr>
-<tr>
-<td>DURACION</td><td><input type="text" id="dur"></td>
-</tr>
-<tr>
-<td>FOTOS</td><td><input type="text" id="fot"></td>
-</tr>
-<tr>
-<td>DISTANCIA</td><td><input type="text" id="dis"></td>
-</tr>
-<tr>
-<td></td><td><button onClick="send_data()" class="classname">Enviar</button></td>
-</tr>
-</table>
-<button onClick="start()" class="classname">Iniciar</button>
-</body>
+	<script src=java.js></script>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<head>
+		<title>SlideR</title>
+	</head>
+	<body>
+		<table class="tg">
+			<tr>
+				<td>OBTURACION</td><td><input type="number" id="obt"></td>
+			</tr>
+			<tr>
+				<td>DURACION</td><td><input type="number" id="dur"></td>
+			</tr>
+			<tr>
+				<td>FOTOS</td><td><input type="number" id="fot"></td>
+			</tr>
+			<tr>
+				<td>DISTANCIA</td><td><input type="number" id="dis"></td>
+			</tr>
+			<tr>
+				<td></td><td><button onClick="set()" class="classname">Enviar</button></td>
+			</tr>
+		</table>
+		<button onClick="control('start')" class="classname">Iniciar</button><br>
+		<button onClick="control('stop')" class="classname">Stop</button>
+	</body>
 </html>
