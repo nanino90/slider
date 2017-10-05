@@ -2,10 +2,14 @@
 	<script src=java.js></script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<head>
-		<title>SlideR</title>
+		<title>Spider control</title>
 	</head>
 	<body>
-		<table class="tg">
+<div id="header">
+	<p><img src="brand.png" class="header-img"></p>
+</div>
+<div class="box">
+		<table class="table-spider">
 			<tr>
 				<td>OBTURACION</td><td><input type="number" id="obt"></td>
 			</tr>
@@ -18,11 +22,39 @@
 			<tr>
 				<td>DISTANCIA</td><td><input type="number" id="dis"></td>
 			</tr>
+		</table>
+	<table class="table-spider">		
+<tr>
+<td>		<button onClick="set()" class="button">Enviar</button></td>
+<td>		<button onClick="control('start')" class="button">Iniciar</button></td>
+<td>		<button onClick="control('stop')" class="button">Stop</button></td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="box">
+		<table class="table-spider">
 			<tr>
-				<td></td><td><button onClick="set()" class="classname">Enviar</button></td>
+				<td>TIEMPO</td><td><input type="number" id="obt"></td>
 			</tr>
 		</table>
-		<button onClick="control('start')" class="classname">Iniciar</button><br>
-		<button onClick="control('stop')" class="classname">Stop</button>
+		<table class="table-spider">
+			<tr>
+		<td> <button onClick="set()" class="button">Abrir</button></td>
+		<td> <button onClick="set()" class="button">Cerrar</button></td>
+			</tr>
+		</table>
+</div>
+<hr>
+<div class="box">
+		<table class="table-spider">
+			<tr>
+		<td> <button onClick="set()" class="button">Inicio</button></td>
+		<td> <button onClick="set()" class="button">Fin</button></td>
+			</tr>
+		</table>
+</div>
+	<p style="clear:both"><br></p>
+
 	</body>
 </html>
