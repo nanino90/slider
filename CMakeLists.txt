@@ -25,7 +25,7 @@ message("Threads libraries/flag: ${CMAKE_THREAD_LIBS_INIT}")
 
 include_directories(slider)
 
-set(SLIDER_SOURCES slider/main.cpp slider/context.cpp slider/cart.cpp slider/parse.cpp)
+file(GLOB SLIDER_SOURCES "slider/*.cpp")
 
 add_executable(slider ${SLIDER_SOURCES})
 target_link_libraries(slider ${Boost_LIBRARIES})
