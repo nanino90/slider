@@ -1,6 +1,6 @@
 #include "cart.h"
 #include "status.h"
-//#include <wiringPi.h>
+#include <wiringPi.h>
 
 cart::cart(void):
 	m_total_time(0),
@@ -16,11 +16,11 @@ cart::cart(void):
 	m_action(ACTION_NONE)
 {
 	std::cout<<"Cart init"<<std::endl;
-//	pinMode((int)GPIO::OBT,OUTPUT);
-//	pinMode((int)GPIO::AA,OUTPUT);
-//	pinMode((int)GPIO::AB,OUTPUT);
-//	pinMode((int)GPIO::BA,OUTPUT);
-//	pinMode((int)GPIO::BB,OUTPUT);
+	pinMode((int)GPIO::OBT,OUTPUT);
+	pinMode((int)GPIO::AA,OUTPUT);
+	pinMode((int)GPIO::AB,OUTPUT);
+	pinMode((int)GPIO::BA,OUTPUT);
+	pinMode((int)GPIO::BB,OUTPUT);
 
 }
 
@@ -32,10 +32,10 @@ release();
 
 void cart::release()
 {
-//	digitalWrite((int)GPIO::AA,0);
-//	digitalWrite((int)GPIO::AB,0);
-//	digitalWrite((int)GPIO::BA,0);
-//	digitalWrite((int)GPIO::BB,0);
+	digitalWrite((int)GPIO::AA,0);
+	digitalWrite((int)GPIO::AB,0);
+	digitalWrite((int)GPIO::BA,0);
+	digitalWrite((int)GPIO::BB,0);
 }
 
 uint16_t cart::get_pos(void)
@@ -143,14 +143,14 @@ bool cart::take()
 
 	if( !m_count )
 	{
-		//digitalWrite((int)GPIO::OBT,1);
+		digitalWrite((int)GPIO::OBT,1);
 		m_count = m_take_time+1;
 	}
 	--m_count;
 
 	if( !m_count )
 	{
-		//digitalWrite((int)GPIO::OBT,0);
+		digitalWrite((int)GPIO::OBT,0);
 		return true;
 	}
 	return false;
@@ -173,19 +173,19 @@ bool cart::move(DIR dir, uint16_t speed)
 		++m_time;
 		return true;
 	}
-	//if(!digitalRead((int)GPIO::ENDSWITCH) && (dir == DIR::END))
-	//{
-//		std::cout<<"Tamper final"<<std::endl;
-//		m_prog = PROG_FINISH;
-//		return false;
-//	}	
-//	if(!digitalRead((int)GPIO::STARTSWITCH) && (dir == DIR::START))
-//	{
-//		std::cout<<"Tamper init"<<std::endl;
-//		m_prog = PROG_FINISH;
-//		m_pos=0;
-//		return false;
-//	}	
+	if(!digitalRead((int)GPIO::ENDSWITCH) && (dir == DIR::END))
+	{
+		std::cout<<"Tamper final"<<std::endl;
+		m_prog = PROG_FINISH;
+		return false;
+	}	
+	if(!digitalRead((int)GPIO::STARTSWITCH) && (dir == DIR::START))
+	{
+		std::cout<<"Tamper init"<<std::endl;
+		m_prog = PROG_FINISH;
+		m_pos=0;
+		return false;
+	}	
 
 	//move a step
 	int a,b,c,d;
@@ -217,10 +217,10 @@ bool cart::move(DIR dir, uint16_t speed)
 			break;
 	}
 
-	//digitalWrite((int)GPIO::AA,a);
-	//digitalWrite((int)GPIO::AB,b);
-	//digitalWrite((int)GPIO::BA,c);
-	//digitalWrite((int)GPIO::BB,d);
+	digitalWrite((int)GPIO::AA,a);
+	digitalWrite((int)GPIO::AB,b);
+	digitalWrite((int)GPIO::BA,c);
+	digitalWrite((int)GPIO::BB,d);
 
 	if(dir == DIR::END){
 		++m_pos;

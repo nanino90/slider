@@ -25,7 +25,7 @@ using namespace boost::property_tree;
 
 typedef SimpleWeb::Server<SimpleWeb::HTTP> HttpServer;
 
-//#include <wiringPi.h>
+#include <wiringPi.h>
 
 cart* pcar;
 context* pcon;
@@ -44,10 +44,8 @@ int main (int argc, char *argv[])
 	server.resource["^/set$"]["POST"]=[](HttpServer::Response& response, shared_ptr<HttpServer::Request> request) {
 		string error_message;
 		try {
-		cout<<"heee"<<endl;
 			ptree pt;
 			read_json(request->content, pt);
-
 			string obt	=pt.get<string>("obturacion");
 			string dur	=pt.get<string>("duracion");
 			string fot	=pt.get<string>("fotos");
@@ -60,7 +58,6 @@ int main (int argc, char *argv[])
 			{
 				error_message = "Impossible values";
 				cout<< "Impossible values"<<endl;
-				response << "HTTP/1.1 400 Bad Request\r\nContent-Length: " << error_message.length() << "\r\n\r\n" << error_message;
 			}else
 			{
 				pcon->status=STATUS_IDLE;
@@ -135,7 +132,7 @@ int main (int argc, char *argv[])
 
 			string action=pt.get<string>("action");
 			string tiempo=pt.get<string>("time");
-			long int time=stoi(tiempo);
+			//long int time=stoi(tiempo);
 
 			response << "HTTP/1.1 200 OK\r\n";
 		}
@@ -212,7 +209,7 @@ int main (int argc, char *argv[])
 			server.start();
 			});
 
-	//	wiringPiSetup();
+		wiringPiSetup();
 
 	for(;;)
 	{
