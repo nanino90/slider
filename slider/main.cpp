@@ -35,8 +35,8 @@ int main (int argc, char *argv[])
 	cout<<"Init program"<<std::endl;  	
 	context* cont = get_context();
 	context_construct(cont);
-	pcon=cont;
 	cart car;
+	pcon=cont;
 	pcar = &car;
 
 	HttpServer server(8080, 4);
@@ -61,6 +61,7 @@ int main (int argc, char *argv[])
 			}else
 			{
 				pcon->status=STATUS_IDLE;
+				pcon->mode=MODE_PROGRAM;
 				response << "HTTP/1.1 200 OK\r\n";
 			}
 		}
@@ -234,14 +235,15 @@ int main (int argc, char *argv[])
 				break;
 			case STATUS_IDLE:
 				cout<<"STATUS: IDLE"<<endl;
+				car.print_config();
 				//wait for init signal
 				break;
 				//running mode
 			case STATUS_RUNNING:
-				cout<<"STATUS: RUNNING"<<endl;
 				switch(cont->mode)
 				{
 					case MODE_PROGRAM:
+				cout<<"STATUS: RUNNING"<<endl;
 						car.program();
 						break;
 					case	MODE_TO_END:
@@ -267,11 +269,12 @@ int main (int argc, char *argv[])
 		}
 		if(car.m_prog == PROG_FINISH)
 		{
-			return 0;
-
+			context_construct(cont);
+			car=cart();
+	pcar = &car;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		//car.print_status();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		car.print_status();
 	}
 	server_thread.join();
 

@@ -2,12 +2,28 @@ body {
 	background:black;
 	margin: 0px;
 	font-family: "arial", sans-serif;
+	font-weight: bold;
 	color: white;
 }
 .header-img {
     max-width: 100%;
     height: auto;
 
+}
+
+input{
+	width: 100%;
+	border: 3px solid #777;
+
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+input:focus{
+/*	background-color: lightblue;*/
+	border: 3px solid #555;
 }
 
 table{

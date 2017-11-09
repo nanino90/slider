@@ -11,9 +11,9 @@ cart::cart(void):
 	m_time(0),
 	m_pos(0),
 	m_count(0),
-	m_stepper_pos(0),
 	m_prog(PROG_INIT),
-	m_action(ACTION_NONE)
+	m_action(ACTION_NONE),
+	m_stepper_pos(0)
 {
 	std::cout<<"Cart init"<<std::endl;
 	pinMode((int)GPIO::OBT,OUTPUT);
@@ -83,6 +83,7 @@ void cart::print_config()
 void cart::print_status()
 {
 	std::cout<<"m_pos "	<<m_pos<<std::endl;
+	std::cout<<"m_time "	<<m_time<<std::endl;
 	std::cout<<std::endl;
 }
 
