@@ -1,4 +1,5 @@
 <html>
+ <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"> 
 	<script src=java.js></script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<head>
@@ -35,13 +36,13 @@
 <div class="box">
 		<table class="table-spider">
 			<tr>
-				<td>TIEMPO</td><td><input type="number" id="obt"></td>
+				<td>TIEMPO</td><td><input type="number" id="tiempo"></td>
 			</tr>
 		</table>
 		<table class="table-spider">
 			<tr>
-		<td> <button onClick="set()" class="button">Abrir</button></td>
-		<td> <button onClick="set()" class="button">Cerrar</button></td>
+		<td> <button onClick="control('open')" class="button">Abrir</button></td>
+		<td> <button onClick="control('close')" class="button">Cerrar</button></td>
 			</tr>
 		</table>
 </div>
@@ -49,8 +50,9 @@
 <div class="box">
 		<table class="table-spider">
 			<tr>
-		<td> <button onClick="set()" class="button">Inicio</button></td>
-		<td> <button onClick="set()" class="button">Fin</button></td>
+		<td> <button onClick="move('init')" class="button">Inicio</button></td>
+		<td> <button onClick="move('end')" class="button">Fin</button></td>
+		<td> <button onClick="move('stop')" class="button">STOP</button></td>
 			</tr>
 		</table>
 </div>

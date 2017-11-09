@@ -33,7 +33,6 @@ bool parse(context* cont, int argc, char** argv)
 			}
 			else
 			{
-				std::cout<<"Missing or wrong command values"<<std::endl;
 				cont->status = STATUS_FINISHED;
 				return 1;
 			}
@@ -49,8 +48,6 @@ bool parse(context* cont, int argc, char** argv)
 			}
 			else
 			{
-				std::cout<<"Missing or wrong command values"<<std::endl;
-				std::cout<<"Obturacion Duracion Fotos Distancia"<<std::endl;
 				cont->status = STATUS_FINISHED;
 				return 1;
 			}

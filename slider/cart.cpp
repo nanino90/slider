@@ -15,7 +15,6 @@ cart::cart(void):
 	m_action(ACTION_NONE),
 	m_stepper_pos(0)
 {
-	std::cout<<"Cart init"<<std::endl;
 	pinMode((int)GPIO::OBT,OUTPUT);
 	pinMode((int)GPIO::AA,OUTPUT);
 	pinMode((int)GPIO::AB,OUTPUT);
@@ -27,7 +26,6 @@ cart::cart(void):
 cart::~cart(void)
 {
 release();
-	std::cout<<"Cart erased"<<std::endl;
 }
 
 void cart::release()
@@ -91,8 +89,6 @@ void cart::program()
 {
 	if(m_time > m_total_time+m_take_time)
 	{
-		std::cout<<m_pos<<std::endl;
-		std::cout<<"Tiempo"<<std::endl;
 		m_prog=PROG_FINISH;
 		return;
 	}
@@ -109,12 +105,12 @@ void cart::program()
 			break;
 		case ACTION_TAKING:
 			--m_count;
+			digitalWrite((int)GPIO::OBT,1);
 			if(!m_count)
 			{
-		std::cout<<m_pos<<std::endl;
-				std::cout<<"Taken"<<std::endl;
 				m_count = m_section_length;
 				m_action = ACTION_MOVING;
+				digitalWrite((int)GPIO::OBT,0);
 			}
 			break;
 		case ACTION_MOVING:
@@ -122,40 +118,33 @@ void cart::program()
 			move(DIR::END, 1);
 			if(!m_count)
 			{
-				std::cout<<"Moved"<<std::endl;
 				release();
 				m_action = ACTION_NONE;
 			}
 			break;
 
 	}
-	//std::cout<<m_time<<std::endl;
 	++m_time;
 }
 
-bool cart::wait()
+void cart::reset_cont()
 {
-
-	return false;
+	m_count=0;
+	return;
 }
 
-bool cart::take()
+void cart::take(uint32_t tiempo)
 {
-
-	if( !m_count )
+	digitalWrite((int)GPIO::OBT,1);
+	std::cout<<"taking"<<std::endl;
+	if( m_count >= tiempo )
 	{
-		digitalWrite((int)GPIO::OBT,1);
-		m_count = m_take_time+1;
-	}
-	--m_count;
-
-	if( !m_count )
-	{
+		std::cout<<"end taking"<<std::endl;
 		digitalWrite((int)GPIO::OBT,0);
-		return true;
+		m_prog=PROG_FINISH;
+		return;
 	}
-	return false;
-
+	++m_count;
 }
 
 bool cart::time_step()
@@ -176,13 +165,11 @@ bool cart::move(DIR dir, uint16_t speed)
 	}
 	if(!digitalRead((int)GPIO::ENDSWITCH) && (dir == DIR::END))
 	{
-		std::cout<<"Tamper final"<<std::endl;
 		m_prog = PROG_FINISH;
 		return false;
 	}	
 	if(!digitalRead((int)GPIO::STARTSWITCH) && (dir == DIR::START))
 	{
-		std::cout<<"Tamper init"<<std::endl;
 		m_prog = PROG_FINISH;
 		m_pos=0;
 		return false;

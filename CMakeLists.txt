@@ -25,14 +25,10 @@ message("Threads libraries/flag: ${CMAKE_THREAD_LIBS_INIT}")
 
 include_directories(slider)
 
-<<<<<<< HEAD
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS -lwiringPi)
 
 set(SLIDER_SOURCES slider/main.cpp slider/context.cpp slider/cart.cpp slider/parse.cpp)
-=======
-file(GLOB SLIDER_SOURCES "slider/*.cpp")
->>>>>>> ecd7095da1a11144c6af1e3188715ed970e1481a
 
 add_executable(slider ${SLIDER_SOURCES})
 target_link_libraries(slider ${Boost_LIBRARIES})

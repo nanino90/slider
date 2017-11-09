@@ -30,8 +30,8 @@ class cart {
 		bool time_step();
 		void program();
 		bool move(DIR dir, uint16_t);
-		bool wait();
-		bool take();
+		void reset_cont();
+		void take(uint32_t tiempo);
 		PROG m_prog;
 		ACTION m_action;
 

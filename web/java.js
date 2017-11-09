@@ -30,8 +30,11 @@ function control(command){
 	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
 	xmlhttp.open("POST", "/control");
 	xmlhttp.setRequestHeader("Content-Type", "application/json");
+	
+	var tiempo = document.getElementById("tiempo").value;
 
 	var json = 	"{\"control\":\""+command+
+			"\",\"tiempo\":\""+tiempo+
 			"\"}";
 	xmlhttp.send(json);	
 
@@ -42,22 +45,13 @@ function control(command){
 	}
 }
 
-function move(){
+function move(position){
 
 	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-	xmlhttp.open("POST", "/set");
+	xmlhttp.open("POST", "/move");
 	xmlhttp.setRequestHeader("Content-Type", "application/json");
 
-	var obt = document.getElementById("obt").value;
-	var dur = document.getElementById("dur").value;
-	var fot = document.getElementById("fot").value;
-	var dis = document.getElementById("dis").value;
-
-
-	var json = 	"{\"obturacion\":\""+obt+
-			"\",\"duracion\":\""+dur+
-			"\",\"fotos\":\""+fot+
-			"\",\"distancia\":\""+dis+
+	var json = 	"{\"move\":\""+position+
 			"\"}";
 	xmlhttp.send(json);	
 

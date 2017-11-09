@@ -32,7 +32,6 @@ context* pcon;
 
 int main (int argc, char *argv[])
 {
-	cout<<"Init program"<<std::endl;  	
 	context* cont = get_context();
 	context_construct(cont);
 	cart car;
@@ -57,7 +56,6 @@ int main (int argc, char *argv[])
 						std::stoi(dis)) )
 			{
 				error_message = "Impossible values";
-				cout<< "Impossible values"<<endl;
 			}else
 			{
 				pcon->status=STATUS_IDLE;
@@ -106,7 +104,21 @@ int main (int argc, char *argv[])
 				else if (pcon->status == STATUS_RUNNING )
 				{
 					pcon->status = STATUS_FINISHED;
-				}
+				}	
+			}
+			else if(control == "open")
+			{
+				pcon->status = STATUS_RUNNING;
+				pcon->mode = MODE_MANUAL;
+				string timer=pt.get<string>("tiempo");
+				pcon->timer = stoi(timer); 
+				std::cout<<"timer"<<std::endl;
+			}
+			else if (control == "close")
+			{
+				pcon->status = STATUS_FINISHED;
+				std::cout<<"stop"<<std::endl;
+			}
 			else
 			{
 				error_message = "Bad control command";
@@ -120,7 +132,7 @@ int main (int argc, char *argv[])
 				response << "HTTP/1.1 200 OK\r\n";
 			}
 		}
-		}
+
 		catch(exception& e) {
 			response << "HTTP/1.1 400 Bad Request\r\nContent-Length: " << error_message.length() << "\r\n\r\n" << error_message;
 		}
@@ -147,7 +159,22 @@ int main (int argc, char *argv[])
 			ptree pt;
 			read_json(request->content, pt);
 
-			string position	=pt.get<string>("position");
+			string position	=pt.get<string>("move");
+
+			if(position=="init")
+			{
+				pcon->mode=MODE_TO_START;
+				pcon->status=STATUS_RUNNING;
+			}
+			else if(position=="end")
+			{
+				pcon->mode=MODE_TO_END;
+				pcon->status=STATUS_RUNNING;
+			}
+			else if(position=="stop")
+			{
+				pcon->status=STATUS_FINISHED;
+			}
 
 			response << "HTTP/1.1 200 OK\r\n";
 		}
@@ -210,7 +237,7 @@ int main (int argc, char *argv[])
 			server.start();
 			});
 
-		wiringPiSetup();
+	wiringPiSetup();
 
 	for(;;)
 	{
@@ -218,7 +245,6 @@ int main (int argc, char *argv[])
 		{
 			//read parameters and decide mode of operation
 			case STATUS_INIT:
-				cout<<"STATUS: INIT"<<endl;
 				parse(cont, argc, argv);
 				if(cont->mode==MODE_PROGRAM)
 				{
@@ -228,14 +254,11 @@ int main (int argc, char *argv[])
 								std::stoi(std::string(argv[4])),
 								std::stoi(std::string(argv[5])) ) )
 					{
-						cout<<"Impossible values"<<std::endl;
 						cont->status = STATUS_FINISHED;
 					}
 				}
 				break;
 			case STATUS_IDLE:
-				cout<<"STATUS: IDLE"<<endl;
-				car.print_config();
 				//wait for init signal
 				break;
 				//running mode
@@ -243,7 +266,6 @@ int main (int argc, char *argv[])
 				switch(cont->mode)
 				{
 					case MODE_PROGRAM:
-				cout<<"STATUS: RUNNING"<<endl;
 						car.program();
 						break;
 					case	MODE_TO_END:
@@ -253,6 +275,7 @@ int main (int argc, char *argv[])
 						car.move(DIR::START, cont->speed);
 						break;
 					case	MODE_MANUAL:
+						car.take(cont->timer);
 						break;
 					default:
 						break;
@@ -260,9 +283,8 @@ int main (int argc, char *argv[])
 				break;
 				//program finished
 			case STATUS_FINISHED:
-				cout<<"STATUS: FINISHED"<<endl;
-						cont->status = STATUS_IDLE;
-
+				car.m_prog = PROG_FINISH;
+				cont->status = STATUS_IDLE;
 			default:
 				break;
 
@@ -271,10 +293,9 @@ int main (int argc, char *argv[])
 		{
 			context_construct(cont);
 			car=cart();
-	pcar = &car;
+			pcar = &car;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		car.print_status();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 	server_thread.join();
 
